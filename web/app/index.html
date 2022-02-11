@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>ELMS Project- Sashrika Das</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <style>
+     
+    </style>
+    
+    <link rel="stylesheet" href="./static/css/bootstrap.css" >
+    <style>
+        :root{
+            font-size: 12px;
+        }
+        body{
+            background-color: black;
+            color: #9e9e9e;
+            
+            padding: 3rem;
+        }
+        .btn{
+            width: 10rem;
+            height: 10rem;
+            /* margin: 1.5rem; */
+        }
+        .margin-bottom-20{
+            margin-bottom: 20px;
+        }
+    </style>
+  </head>
+  <body>
+
+    <div class="container-fluid">
+        <h1 class="text-center">SHOULD SCHOOL DITCH LETTER GRADES?</h1>
+        <h2 class="text-center margin-bottom-20">SASHRIKA DAS, 6TH GRADE</h2>
+        <div class="container">
+            <div class="row margin-bottom-20">
+            
+             <div class="col"><h4>Daniel</h4></div>
+             
+             <div class="col">
+                <button id="btn-p-1-1" type="button" class="btn btn-primary ">Dialog 1</button>
+              </div>
+              <div class="col">
+                <button id="btn-p-1-2" type="button" class="btn btn-primary">Dialog 2</button>
+              </div>
+              
+              
+            </div>
+
+            <div class="row ">
+                <div class="col"><h4>Gauri&nbsp;&nbsp;</h4></div>
+                
+                <div class="col">
+                    <button id="btn-p-2-1" type="button" class="btn btn-warning">Dialog 1</button>
+                  </div>
+                  <div class="col">
+                    <button id="btn-p-2-2" type="button" class="btn btn-warning">Dialog 2</button>
+                  </div>
+                  
+            </div>
+            <div>
+                <div class="row text-center">
+                    <h4 id="status" class="text-danger">Disconnected</h4>
+                </div>
+            </div>
+          </div>
+    </div>
+
+   
+    <script src="./static/js/jquery-3.2.1.slim.min.js"></script>
+    <script src="./static/js/popper.min.js" ></script>
+    <script src="./static/js/bootstrap.min.js" ></script>
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        var socket = io();
+       
+        let buttons = ["btn-p-1-1","btn-p-1-2","btn-p-2-1","btn-p-2-2"];
+
+        buttons.forEach((id)=>{
+            $(`#${id}`).prop("disabled", true);
+
+            $(`#${id}`).click((e)=>{
+                e.preventDefault();
+                console.log("clicked", id);
+                socket.emit('message', id);
+                buttons.forEach((id)=>{
+                    $(`#${id}`).prop("disabled", true);
+                    $(`#${id}`).addClass("btn-dark", false);
+                });
+            })
+        })
+        socket.on("connect", ()=>{
+            console.log("connected to server");
+            $("#status").text("Connected");
+            $("#status").removeClass("text-danger");
+            $("#status").removeClass("text-success");
+            $("#status").addClass("text-success");
+            buttons.forEach((id)=>{
+                $(`#${id}`).prop("disabled", false);
+                $(`#${id}`).removeClass("btn-dark", false);
+            });
+
+        })
+
+        socket.on("disconnect", ()=>{
+            console.log("disconnected from server");
+            
+            $("#status").text("Disconnected");
+            $("#status").removeClass("text-success");
+            $("#status").removeClass("text-danger");
+            $("#status").addClass("text-danger");
+            buttons.forEach((id)=>{
+                $(`#${id}`).prop("disabled", true);
+                $(`#${id}`).addClass("btn-dark", false);
+            });
+        });
+
+        socket.on('message', function(msg) {
+            console.log(msg);
+            buttons.forEach((id)=>{
+                    $(`#${id}`).prop("disabled", false);
+                    $(`#${id}`).removeClass("btn-dark", false);
+            });
+        });
+    </script>
+
+  </body>
+</html>
