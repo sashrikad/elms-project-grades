@@ -1,0 +1,22 @@
+version: "2"
+
+volumes:
+  settings:
+  
+
+services:
+  web:
+    build: ./web
+    restart: always
+    labels:
+      io.balena.features.balena-api: "1" # necessary to discover services
+    privileged: true # necessary to change container hostname
+    ports:
+      - "80" # only necessary if using ExternalHttpListener (see below)
+
+  browser:
+        image: balenablocks/browser
+        network_mode: host
+        privileged: true
+        volumes:
+            - 'settings:/data'
